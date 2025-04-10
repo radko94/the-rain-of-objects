@@ -1,0 +1,68 @@
+' Set up the window
+GraphicsWindow.Title = "Catch the Falling Objects"
+GraphicsWindow.Width = 800
+GraphicsWindow.Height = 600
+
+' Create the player (a blue square)
+player = Shapes.AddRectangle(50, 50)
+Shapes.SetColor(player, "Blue")
+playerInitialX = (GraphicsWindow.Width - 50) / 2
+Shapes.SetPosition(player, playerInitialX, GraphicsWindow.Height - 60)
+
+' Create the falling object (a red circle)
+ball = Shapes.AddEllipse(30, 30)
+Shapes.SetColor(ball, "Red")
+ballX = Math.GetRandomNumber(GraphicsWindow.Width - 30)
+ballY = 0
+Shapes.SetPosition(ball, ballX, ballY)
+
+' Define the falling speed
+fallSpeed = 5
+
+' Start the game loop using a timer
+Timer.Interval = 50  ' Timer ticks every 50 milliseconds
+Timer.Tick = OnTick
+
+' Listen for keyboard events to move the player
+GraphicsWindow.KeyDown = OnKeyDown
+
+' Game loop: updates the falling object and checks for collisions
+Sub OnTick
+  ' Update the ball's position
+  ballY = ballY + fallSpeed
+  Shapes.SetPosition(ball, ballX, ballY)
+  
+  ' Reset the ball to the top if it goes off-screen
+  If ballY > GraphicsWindow.Height Then
+    ballX = Math.GetRandomNumber(GraphicsWindow.Width - 30)
+    ballY = 0
+    Shapes.SetPosition(ball, ballX, ballY)
+  EndIf
+  
+  ' Get the current position of the player
+  playerX = Shapes.GetLeft(player)
+  playerY = Shapes.GetTop(player)
+  
+  ' Check for collision between the ball and the player
+  If (ballX + 30 > playerX) And (ballX < playerX + 50) And (ballY + 30 > playerY) And (ballY < playerY + 50) Then
+    GraphicsWindow.ShowMessage("Collision Detected! Game Over", "Game Over")
+    Timer.Enabled = "False"  ' Stop the game loop
+  EndIf
+EndSub
+
+' Handle player movement with the Left and Right arrow keys
+Sub OnKeyDown
+  key = GraphicsWindow.LastKey
+  playerX = Shapes.GetLeft(player)
+  moveStep = 10
+  If key = "Left" Then
+    playerX = playerX - moveStep
+    If playerX < 0 Then playerX = 0
+  ElseIf key = "Right" Then
+    playerX = playerX + moveStep
+    If playerX > GraphicsWindow.Width - 50 Then
+      playerX = GraphicsWindow.Width - 50
+    EndIf
+  EndIf
+  Shapes.SetLeft(player, playerX)
+EndSub
