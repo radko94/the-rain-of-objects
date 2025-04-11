@@ -45,8 +45,8 @@ Sub OnTick
   
   ' Check for collision between the ball and the player
   If (ballX + 30 >= playerX) And (ballX <= playerX + 50) And (ballY + 30 >= playerY) And (ballY <= playerY + 50) Then
+    Timer.Pause()
     GraphicsWindow.ShowMessage("Collision Detected! Game Over", "Game Over")
-    Timer.Enabled = False  ' Stop the game loop
   EndIf
 EndSub
 
