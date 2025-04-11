@@ -9,15 +9,30 @@ player = Shapes.AddRectangle(50, 50)
 playerInitialX = (GraphicsWindow.Width - 50) / 2
 Shapes.Move(player, playerInitialX, GraphicsWindow.Height - 60)
 
-' Set the brush color for the falling object (a red circle)
+' Set the brush color for the falling objects (red circles)
 GraphicsWindow.BrushColor = "Red"
-ball = Shapes.AddEllipse(30, 30)
-ballX = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
-ballY = 0
-Shapes.Move(ball, ballX, ballY)
+
+' Initialize ball arrays
+ballCount = 5
+balls = Array.Create(ballCount)
+ballX = Array.Create(ballCount)
+ballY = Array.Create(ballCount)
+
+For i = 1 To ballCount
+  balls[i] = Shapes.AddEllipse(30, 30)
+  ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
+  ballY[i] = 0
+  Shapes.Move(balls[i], ballX[i], ballY[i])
+EndFor
 
 ' Define the falling speed
 fallSpeed = 5
+
+' Initialize score
+score = 0
+GraphicsWindow.BrushColor = "Black"
+scoreText = Shapes.AddText("Score: 0")
+Shapes.Move(scoreText, 10, 10)
 
 ' Start the game loop using a timer
 Timer.Interval = 50  ' Timer ticks every 50 milliseconds
@@ -26,28 +41,35 @@ Timer.Tick = OnTick
 ' Listen for keyboard events to move the player
 GraphicsWindow.KeyDown = OnKeyDown
 
-' Game loop: updates the falling object and checks for collisions
+' Game loop: updates the falling objects and checks for collisions
 Sub OnTick
-  ' Update the ball's position
-  ballY = ballY + fallSpeed
-  Shapes.Move(ball, ballX, ballY)
-  
-  ' Reset the ball to the top if it goes off-screen
-  If ballY > GraphicsWindow.Height Then
-    ballX = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
-    ballY = 0
-    Shapes.Move(ball, ballX, ballY)
-  EndIf
-  
-  ' Get the current position of the player
-  playerX = Shapes.GetLeft(player)
-  playerY = Shapes.GetTop(player)
-  
-  ' Check for collision between the ball and the player
-  If (ballX + 30 >= playerX) And (ballX <= playerX + 50) And (ballY + 30 >= playerY) And (ballY <= playerY + 50) Then
-    Timer.Pause()
-    GraphicsWindow.ShowMessage("Collision Detected! Game Over", "Game Over")
-  EndIf
+  For i = 1 To ballCount
+    ' Update the ball's position
+    ballY[i] = ballY[i] + fallSpeed
+    Shapes.Move(balls[i], ballX[i], ballY[i])
+
+    ' Reset the ball to the top if it goes off-screen
+    If ballY[i] > GraphicsWindow.Height Then
+      ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
+      ballY[i] = 0
+      Shapes.Move(balls[i], ballX[i], ballY[i])
+
+      ' Increment the score for successfully avoiding the ball
+      score = score + 1
+      Shapes.SetText(scoreText, "Score: " + score)
+    EndIf
+
+    ' Get the current position of the player
+    playerX = Shapes.GetLeft(player)
+    playerY = Shapes.GetTop(player)
+
+    ' Check for collision between the ball and the player
+    If (ballX[i] + 30 >= playerX) And (ballX[i] <= playerX + 50) And (ballY[i] + 30 >= playerY) And (ballY[i] <= playerY + 50) Then
+      Timer.Pause()
+      GraphicsWindow.ShowMessage("Collision Detected! Game Over. Final Score: " + score, "Game Over")
+      Program.End()
+    EndIf
+  EndFor
 EndSub
 
 ' Handle player movement with the Left and Right arrow keys
