@@ -32,28 +32,6 @@ GraphicsWindow.KeyDown = OnKeyDown
 
 paused = "False"
 
-' Increase ball speed every 10 points
-If score Mod 10 = 0 And score > 0 Then
-  For i = 1 To ballCount
-    ballSpeed[i] = ballSpeed[i] + 1  ' Increase speed for all balls
-  EndFor
-EndIf
-
-' Play sound when the player scores
-If ballY[i] > GraphicsWindow.Height Then
-  score = score + 1
-  Shapes.SetText(scoreText, "Score: " + score)
-  Sound.PlayBellRing()
-EndIf
-
-' Play sound on collision
-If (ballX[i] + 30 > playerX) And (ballX[i] < playerX + 50) And (ballY[i] + 30 > playerY) And (ballY[i] < playerY + 50) Then
-  Sound.PlayChime()
-  Timer.Pause()
-  GraphicsWindow.ShowMessage("Collision Detected! Game Over. Final Score: " + score, "Game Over")
-  Program.End()
-EndIf
-
 ' Game loop: updates the falling objects and checks for collisions
 Sub OnTick
   MoveBalls()
@@ -87,6 +65,7 @@ Sub MoveBalls
       ' Increment the score for successfully avoiding the ball
       score = score + 1
       Shapes.SetText(scoreText, "Score: " + score)
+      Sound.PlayBellRing()
     EndIf
 
     ' Get the current position of the player
@@ -94,7 +73,8 @@ Sub MoveBalls
     playerY = Shapes.GetTop(player)
 
     ' Check for collision between the ball and the player
-    If (ballX[i] + 30 > playerX) And (ballX[i] < playerX + 50) And (ballY[i] + 30 > playerY) And (ballY[i] < playerY + 50) Then
+    If (ballX[i] + 30 >= playerX) And (ballX[i] <= playerX + 50) And (ballY[i] + 30 >= playerY) And (ballY[i] <= playerY + 50) Then
+      Sound.PlayChime()
       Timer.Pause()
       GraphicsWindow.ShowMessage("Collision Detected! Game Over. Final Score: " + score, "Game Over")
       Program.End()
