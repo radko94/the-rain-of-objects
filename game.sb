@@ -14,16 +14,7 @@ GraphicsWindow.BrushColor = "Red"
 
 ' Initialize ball arrays
 ballCount = 5
-balls = Array.Create(ballCount)
-ballX = Array.Create(ballCount)
-ballY = Array.Create(ballCount)
-
-For i = 1 To ballCount
-  balls[i] = Shapes.AddEllipse(30, 30)
-  ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
-  ballY[i] = 0
-  Shapes.Move(balls[i], ballX[i], ballY[i])
-EndFor
+InitializeBalls()
 
 ' Define the falling speed
 fallSpeed = 5
@@ -43,6 +34,21 @@ GraphicsWindow.KeyDown = OnKeyDown
 
 ' Game loop: updates the falling objects and checks for collisions
 Sub OnTick
+  MoveBalls()
+EndSub
+
+' Function to initialize the balls
+Sub InitializeBalls
+  For i = 1 To ballCount
+    balls[i] = Shapes.AddEllipse(30, 30)
+    ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
+    ballY[i] = 0
+    Shapes.Move(balls[i], ballX[i], ballY[i])
+  EndFor
+EndSub
+
+' Function to move the balls and check for collisions
+Sub MoveBalls
   For i = 1 To ballCount
     ' Update the ball's position
     ballY[i] = ballY[i] + fallSpeed
