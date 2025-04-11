@@ -65,7 +65,7 @@ Sub MoveBalls
       ' Increment the score for successfully avoiding the ball
       score = score + 1
       Shapes.SetText(scoreText, "Score: " + score)
-      Sound.PlayBellRing()
+      Sound.PlayClick()
     EndIf
 
     ' Get the current position of the player
