@@ -16,7 +16,7 @@ GraphicsWindow.BrushColor = "Red"
 ballCount = 5
 currentBallCount = 0  ' Track the number of balls currently spawned
 
-InitializeBalls()
+InitializeBall()
 
 ' Define the falling speed
 fallSpeed = 5
