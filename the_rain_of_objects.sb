@@ -1,5 +1,5 @@
 ' Set up the window
-GraphicsWindow.Title = "Catch the Falling Objects"
+GraphicsWindow.Title = "The rain of objects"
 GraphicsWindow.Width = 1200
 GraphicsWindow.Height = 900
 
