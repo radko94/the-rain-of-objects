@@ -30,6 +30,30 @@ Timer.Tick = OnTick
 ' Listen for keyboard events to move the player
 GraphicsWindow.KeyDown = OnKeyDown
 
+paused = "False"
+
+' Increase ball speed every 10 points
+If score Mod 10 = 0 And score > 0 Then
+  For i = 1 To ballCount
+    ballSpeed[i] = ballSpeed[i] + 1  ' Increase speed for all balls
+  EndFor
+EndIf
+
+' Play sound when the player scores
+If ballY[i] > GraphicsWindow.Height Then
+  score = score + 1
+  Shapes.SetText(scoreText, "Score: " + score)
+  Sound.PlayBellRing()
+EndIf
+
+' Play sound on collision
+If (ballX[i] + 30 > playerX) And (ballX[i] < playerX + 50) And (ballY[i] + 30 > playerY) And (ballY[i] < playerY + 50) Then
+  Sound.PlayChime()
+  Timer.Pause()
+  GraphicsWindow.ShowMessage("Collision Detected! Game Over. Final Score: " + score, "Game Over")
+  Program.End()
+EndIf
+
 ' Game loop: updates the falling objects and checks for collisions
 Sub OnTick
   MoveBalls()
@@ -39,7 +63,7 @@ EndSub
 Sub InitializeBalls
   For i = 1 To ballCount
     balls[i] = Shapes.AddEllipse(30, 30)
-    ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
+    ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 10
     ballY[i] = 0
     ballSpeed[i] = Math.GetRandomNumber(5) + 2  ' Random speed between 2 and 6
     Shapes.Move(balls[i], ballX[i], ballY[i])
@@ -70,7 +94,7 @@ Sub MoveBalls
     playerY = Shapes.GetTop(player)
 
     ' Check for collision between the ball and the player
-    If (ballX[i] + 30 >= playerX) And (ballX[i] <= playerX + 50) And (ballY[i] + 30 >= playerY) And (ballY[i] <= playerY + 50) Then
+    If (ballX[i] + 30 > playerX) And (ballX[i] < playerX + 50) And (ballY[i] + 30 > playerY) And (ballY[i] < playerY + 50) Then
       Timer.Pause()
       GraphicsWindow.ShowMessage("Collision Detected! Game Over. Final Score: " + score, "Game Over")
       Program.End()
@@ -83,6 +107,19 @@ Sub OnKeyDown
   key = GraphicsWindow.LastKey
   playerX = Shapes.GetLeft(player)
   moveStep = 10
+
+  ' Handle pause/resume
+  If key = "P" Then
+    If paused = "False" Then
+      Timer.Pause()
+      paused = "True"
+    Else
+      Timer.Resume()
+      paused = "False"
+    EndIf
+  EndIf
+
+  ' Handle player movement
   If key = "Left" Then
     playerX = Math.Max(0, playerX - moveStep)
   ElseIf key = "Right" Then
