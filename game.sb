@@ -16,7 +16,7 @@ GraphicsWindow.BrushColor = "Red"
 ballCount = 5
 currentBallCount = 0  ' Track the number of balls currently spawned
 
-InitializeBall()
+InitializeBalls()
 
 ' Define the falling speed
 fallSpeed = 5
@@ -34,45 +34,34 @@ Timer.Tick = OnTick
 ' Listen for keyboard events to move the player
 GraphicsWindow.KeyDown = OnKeyDown
 
-' Function to initialize a single ball
-Sub InitializeBall
-  If currentBallCount < ballCount Then
-    currentBallCount = currentBallCount + 1
-    balls[currentBallCount] = Shapes.AddEllipse(30, 30)
-    ballX[currentBallCount] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
-    ballY[currentBallCount] = 0
-    Shapes.Move(balls[currentBallCount], ballX[currentBallCount], ballY[currentBallCount])
-  EndIf
-EndSub
-
-' Function to reset all balls (optional cleanup)
-Sub ResetBalls
-  For i = 1 To currentBallCount
-    Shapes.Remove(balls[i])  ' Remove the ball from the screen
-  EndFor
-  currentBallCount = 0  ' Reset the ball count
-EndSub
-
 ' Game loop: updates the falling objects and checks for collisions
 Sub OnTick
   MoveBalls()
-  ' Spawn a new ball every few ticks (e.g., every 200 milliseconds)
-  If Math.Remainder(Timer.Interval * Timer.TickCount, 200) = 0 Then
-    InitializeBall()
-  EndIf
+EndSub
+
+' Function to initialize the balls
+Sub InitializeBalls
+  For i = 1 To ballCount
+    balls[i] = Shapes.AddEllipse(30, 30)
+    ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
+    ballY[i] = 0
+    ballSpeed[i] = Math.GetRandomNumber(5) + 2  ' Random speed between 2 and 6
+    Shapes.Move(balls[i], ballX[i], ballY[i])
+  EndFor
 EndSub
 
 ' Function to move the balls and check for collisions
 Sub MoveBalls
   For i = 1 To ballCount
-    ' Update the ball's position
-    ballY[i] = ballY[i] + fallSpeed
+    ' Update the ball's position with its unique speed
+    ballY[i] = ballY[i] + ballSpeed[i]
     Shapes.Move(balls[i], ballX[i], ballY[i])
 
     ' Reset the ball to the top if it goes off-screen
     If ballY[i] > GraphicsWindow.Height Then
       ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
       ballY[i] = 0
+      ballSpeed[i] = Math.GetRandomNumber(5) + 2  ' Assign a new random speed
       Shapes.Move(balls[i], ballX[i], ballY[i])
 
       ' Increment the score for successfully avoiding the ball
