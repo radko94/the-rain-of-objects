@@ -1,7 +1,7 @@
 ' Set up the window
 GraphicsWindow.Title = "Catch the Falling Objects"
-GraphicsWindow.Width = 800
-GraphicsWindow.Height = 600
+GraphicsWindow.Width = 1200
+GraphicsWindow.Height = 900
 
 ' Set the brush color for the player (a blue square)
 GraphicsWindow.BrushColor = "Blue"
@@ -13,13 +13,9 @@ Shapes.Move(player, playerInitialX, GraphicsWindow.Height - 60)
 GraphicsWindow.BrushColor = "Red"
 
 ' Initialize ball arrays
-ballCount = 5
-currentBallCount = 0  ' Track the number of balls currently spawned
+ballCount = 15
 
 InitializeBalls()
-
-' Define the falling speed
-fallSpeed = 5
 
 ' Initialize score
 score = 0
@@ -61,7 +57,7 @@ Sub MoveBalls
     If ballY[i] > GraphicsWindow.Height Then
       ballX[i] = Math.GetRandomNumber(GraphicsWindow.Width - 30) - 1
       ballY[i] = 0
-      ballSpeed[i] = Math.GetRandomNumber(5) + 2  ' Assign a new random speed
+      ballSpeed[i] = Math.GetRandomNumber(13) + 5  ' Assign a new random speed
       Shapes.Move(balls[i], ballX[i], ballY[i])
 
       ' Increment the score for successfully avoiding the ball
